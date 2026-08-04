@@ -3,16 +3,20 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Auditoria - Aplicacion</title>
+    <title>Devoluciones - Aplicacion</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="static/css/styles.css">
   </head>
   <body>
     <?php include "_layout_sidebar.php"; ?>
     <main class="content">
-      <div class="header-title"><h2>Auditoria</h2></div>
+      <div class="d-flex justify-content-between align-items-center header-title">
+        <h2>Devoluciones</h2>
+        <a href="javascript:void(0)" data-action="coming-soon" class="btn btn-primary">Nueva devolucion</a>
+      </div>
       <div class="card"><div class="card-body">
-        <ul class="list-group"><li class="list-group-item">2026-08-01 - Usuario admin - Inicio de sesion</li></ul>
+        <table class="table"><thead><tr><th>ID</th><th>Cliente</th><th>Motivo</th></tr></thead>
+        <tbody><tr><td>9001</td><td>ACME</td><td>Producto dañado</td></tr></tbody></table>
       </div></div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

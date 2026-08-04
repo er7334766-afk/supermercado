@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login - Aplicacion</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="static/css/styles.css">
   </head>
   <body>
     <div class="container login-wrapper">
@@ -29,7 +29,7 @@
       </div>
       <p class="text-center text-muted mt-3">Version estatica generada para integracion con phpMyAdmin</p>
     </div>
-    <script src="scripts.js"></script>
+    <script src="static/js/scripts.js"></script>
 </body>
 </html>
 
