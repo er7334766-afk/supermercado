@@ -22,7 +22,7 @@
               <input type="password" class="form-control" placeholder="Contrasena">
             </div>
             <div class="d-grid">
-              <a href="dashboard.php" class="btn btn-primary">Entrar</a>
+              <a href="inicio.php" class="btn btn-primary">Entrar</a>
             </div>
           </form>
         </div>

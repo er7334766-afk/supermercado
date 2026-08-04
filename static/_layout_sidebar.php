@@ -6,25 +6,25 @@ function active($page) {
 }
 ?>
 <nav class="sidebar d-flex flex-column p-3">
-  <a href="dashboard.php" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+  <a href="inicio.php" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
     <span class="fs-4">MiApp</span>
   </a>
   <hr style="border-color: rgba(255,255,255,0.06)">
   <ul class="nav nav-pills flex-column mb-auto">
-    <li class="nav-item"><a href="dashboard.php" class="nav-link <?php echo active('dashboard.php'); ?>">Dashboard</a></li>
-    <li><a href="customers.php" class="nav-link <?php echo active('customers.php'); ?>">Clientes</a></li>
-    <li><a href="products.php" class="nav-link <?php echo active('products.php'); ?>">Productos</a></li>
+    <li class="nav-item"><a href="inicio.php" class="nav-link <?php echo active('inicio.php'); ?>">Dashboard</a></li>
+    <li><a href="clientes.php" class="nav-link <?php echo active('clientes.php'); ?>">Clientes</a></li>
+    <li><a href="productos.php" class="nav-link <?php echo active('productos.php'); ?>">Productos</a></li>
     <li><a href="ventas.php" class="nav-link <?php echo active('ventas.php'); ?>">Ventas</a></li>
-    <li><a href="purchases.php" class="nav-link <?php echo active('purchases.php'); ?>">Compras</a></li>
-    <li><a href="suppliers.php" class="nav-link <?php echo active('suppliers.php'); ?>">Proveedores</a></li>
-    <li><a href="inventory.php" class="nav-link <?php echo active('inventory.php'); ?>">Inventario</a></li>
-    <li><a href="reports.php" class="nav-link <?php echo active('reports.php'); ?>">Reportes</a></li>
-    <li><a href="users.php" class="nav-link <?php echo active('users.php'); ?>">Usuarios</a></li>
-    <li><a href="departments.php" class="nav-link <?php echo active('departments.php'); ?>">Departamentos</a></li>
+    <li><a href="compras.php" class="nav-link <?php echo active('compras.php'); ?>">Compras</a></li>
+    <li><a href="proveedores.php" class="nav-link <?php echo active('proveedores.php'); ?>">Proveedores</a></li>
+    <li><a href="inventario.php" class="nav-link <?php echo active('inventario.php'); ?>">Inventario</a></li>
+    <li><a href="reportes.php" class="nav-link <?php echo active('reportes.php'); ?>">Reportes</a></li>
+    <li><a href="usuarios.php" class="nav-link <?php echo active('usuarios.php'); ?>">Usuarios</a></li>
+    <li><a href="departamentos.php" class="nav-link <?php echo active('departamentos.php'); ?>">Departamentos</a></li>
     <li><a href="devoluciones.php" class="nav-link <?php echo active('devoluciones.php'); ?>">Devoluciones</a></li>
-    <li><a href="audit.php" class="nav-link <?php echo active('audit.php'); ?>">Auditoria</a></li>
-    <li><a href="cashregister.php" class="nav-link <?php echo active('cashregister.php'); ?>">Caja</a></li>
-    <li><a href="pos.php" class="nav-link <?php echo active('pos.php'); ?>">Punto de Venta</a></li>
+    <li><a href="auditoria.php" class="nav-link <?php echo active('auditoria.php'); ?>">Auditoria</a></li>
+    <li><a href="caja.php" class="nav-link <?php echo active('caja.php'); ?>">Caja</a></li>
+    <li><a href="punto_venta.php" class="nav-link <?php echo active('punto_venta.php'); ?>">Punto de Venta</a></li>
     <li><a href="facturacion.php" class="nav-link <?php echo active('facturacion.php'); ?>">Facturacion</a></li>
   </ul>
   <hr style="border-color: rgba(255,255,255,0.06)">
