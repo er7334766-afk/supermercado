@@ -8,25 +8,93 @@
     <link rel="stylesheet" href="static/css/styles.css">
   </head>
   <body>
-    <?php include "_layout_sidebar.php"; ?>
+    <?php include "menu/_layout_sidebar.php"; ?>
     <main class="content">
       <div class="d-flex justify-content-between align-items-center header-title">
+
         <h2>Productos</h2>
-        <a href="javascript:void(0)" data-action="coming-soon" class="btn btn-primary">Nuevo producto</a>
-      </div>
-      <div class="card">
+
+        <a href="nuevo_producto.php" class="btn btn-primary">
+            Nuevo Producto
+        </a>
+
+    </div>
+
+    <div class="card shadow-sm">
+
         <div class="card-body">
-          <table class="table table-striped">
-            <thead><tr><th>Codigo</th><th>Nombre</th><th>Stock</th><th>Precio</th><th>Acciones</th></tr></thead>
-            <tbody>
-              <tr><td>P-001</td><td>Producto 1</td><td>12</td><td>$9.99</td><td><a class="btn btn-sm btn-outline-primary" href="javascript:void(0)" data-action="coming-soon">Editar</a></td></tr>
-            </tbody>
-          </table>
+
+            <table class="table table-striped table-hover align-middle">
+
+                <thead class="table-dark">
+
+                    <tr>
+
+                        <th>Código</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Compra</th>
+                        <th>Venta</th>
+                        <th>Existencia</th>
+                        <th>Mínimo</th>
+                        <th>Unidad</th>
+                        <th>Vence</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td>750123456789</td>
+                        <td>Leche Sula Entera</td>
+                        <td>Leche entera 1 litro</td>
+                        <td>L. 28.50</td>
+                        <td>L. 35.00</td>
+                        <td>80</td>
+                        <td>10</td>
+                        <td>Unidad</td>
+                        <td>31/12/2027</td>
+
+                        <td>
+                            <span class="badge bg-success">
+                                Activo
+                            </span>
+                        </td>
+
+                        <td>
+
+                            <a href="editar_producto.php?id=1"
+                               class="btn btn-warning btn-sm">
+                                Editar
+                            </a>
+
+                            <a href="eliminar_producto.php?id=1"
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('¿Desea eliminar este producto?');">
+
+                                Eliminar
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
         </div>
-      </div>
+
+    </div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="scripts.js"></script>
+    <script src="static/js/scripts.js"></script>
 </body>
 </html>
 

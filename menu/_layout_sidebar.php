@@ -11,7 +11,7 @@ function active($page) {
   </a>
   <hr style="border-color: rgba(255,255,255,0.06)">
   <ul class="nav nav-pills flex-column mb-auto">
-    <li class="nav-item"><a href="inicio.php" class="nav-link <?php echo active('inicio.php'); ?>">Dashboard</a></li>
+    <li class="nav-item"><a href="inicio.php" class="nav-link <?php echo active('inicio.php'); ?>">Inicio</a></li>
     <li><a href="clientes.php" class="nav-link <?php echo active('clientes.php'); ?>">Clientes</a></li>
     <li><a href="productos.php" class="nav-link <?php echo active('productos.php'); ?>">Productos</a></li>
     <li><a href="ventas.php" class="nav-link <?php echo active('ventas.php'); ?>">Ventas</a></li>

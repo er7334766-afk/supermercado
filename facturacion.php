@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="static/css/styles.css">
   </head>
   <body>
-    <?php include "_layout_sidebar.php"; ?>
+    <?php include "menu/_layout_sidebar.php"; ?>
     <main class="content">
       <div class="header-title d-flex justify-content-between align-items-center"><h2>Facturacion</h2><a class="btn btn-primary" href="javascript:void(0)" data-action="coming-soon">Nueva factura</a></div>
       <div class="card"><div class="card-body">
@@ -16,7 +16,7 @@
       </div></div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="scripts.js"></script>
+    <script src="static/js/scripts.js"></script>
 </body>
 </html>
 

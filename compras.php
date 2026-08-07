@@ -8,25 +8,92 @@
     <link rel="stylesheet" href="static/css/styles.css">
   </head>
   <body>
-    <?php include "_layout_sidebar.php"; ?>
+    <?php include "menu/_layout_sidebar.php"; ?>
     <main class="content">
+
       <div class="d-flex justify-content-between align-items-center header-title">
-        <h2>Compras</h2>
-        <a href="javascript:void(0)" data-action="coming-soon" class="btn btn-primary">Nueva compra</a>
+
+          <h2>Compras</h2>
+
+          <a href="nueva_compra.php" class="btn btn-primary">
+              Nueva compra
+          </a>
+
       </div>
+
       <div class="card">
-        <div class="card-body">
-          <table class="table">
-            <thead><tr><th>ID</th><th>Proveedor</th><th>Total</th><th>Fecha</th></tr></thead>
-            <tbody>
-              <tr><td>5001</td><td>Proveedor X</td><td>$450.00</td><td>2026-07-30</td></tr>
-            </tbody>
-          </table>
-        </div>
+
+          <div class="card-body">
+
+              <table class="table table-striped table-hover align-middle">
+
+                  <thead class="table-dark">
+
+                      <tr>
+                          <th>ID</th>
+                          <th>Factura</th>
+                          <th>Proveedor</th>
+                          <th>Subtotal</th>
+                          <th>Impuesto</th>
+                          <th>Total</th>
+                          <th>Fecha</th>
+                          <th>Estado</th>
+                          <th>Acciones</th>
+                      </tr>
+
+                  </thead>
+
+                  <tbody>
+
+                      <tr>
+
+                          <td>5001</td>
+
+                          <td>COMP-000001</td>
+
+                          <td>Proveedor X</td>
+
+                          <td>L. 400.00</td>
+
+                          <td>L. 60.00</td>
+
+                          <td>
+                              <strong>L. 460.00</strong>
+                          </td>
+
+                          <td>2026-07-30</td>
+
+                          <td>
+                              <span class="badge bg-success">
+                                  Registrada
+                              </span>
+                          </td>
+
+                          <td>
+
+                              <a
+                                  href="editar_compra.php?id=5001"
+                                  class="btn btn-sm btn-warning">
+
+                                  Editar
+
+                              </a>
+
+                          </td>
+
+                      </tr>
+
+                  </tbody>
+
+              </table>
+
+          </div>
+
       </div>
-    </main>
+
+  </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="scripts.js"></script>
+    <script src="static/js/scripts.js"></script>
 </body>
 </html>
 
