@@ -10,7 +10,10 @@ if (empty($_SESSION['usuario_id'])) {
 try {
     $stmt = $conexion->prepare(
         "SELECT d.id_devolucion, c.nombre AS cliente_nombre, c.apellido AS cliente_apellido, d.motivo, d.fecha_devolucion, d.estado "
-        . "FROM devoluciones d LEFT JOIN clientes c ON c.id_cliente = d.fk_cliente ORDER BY d.id_devolucion DESC"
+        . "FROM devoluciones d "
+        . "LEFT JOIN ventas v ON v.id_venta = d.fk_venta "
+        . "LEFT JOIN clientes c ON c.id_cliente = v.fk_cliente "
+        . "ORDER BY d.id_devolucion DESC"
     );
     $stmt->execute();
     $devoluciones = $stmt->fetchAll();

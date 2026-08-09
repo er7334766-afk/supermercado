@@ -1,5 +1,4 @@
 <?php
-session_start();
 $current = basename($_SERVER['SCRIPT_NAME']);
 function active($page) {
     global $current;

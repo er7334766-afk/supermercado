@@ -8,7 +8,12 @@ if (empty($_SESSION['usuario_id'])) {
 }
 
 try {
-    $stmt = $conexion->query("SELECT id_caja, nombre, ubicacion, estado, saldo_inicial, saldo_actual FROM cajas ORDER BY id_caja DESC LIMIT 1");
+    $stmt = $conexion->query(
+        "SELECT c.id_caja, c.nombre, c.ubicacion, c.estado, a.monto_inicial, a.monto_contado "
+        . "FROM cajas c "
+        . "LEFT JOIN aperturas_caja a ON a.fk_caja = c.id_caja "
+        . "ORDER BY a.id_apertura DESC LIMIT 1"
+    );
     $caja = $stmt->fetch();
     if (!$caja) {
         $caja = [
@@ -16,8 +21,8 @@ try {
             'nombre' => 'Sin caja registrada',
             'ubicacion' => '-',
             'estado' => 'Cerrada',
-            'saldo_inicial' => 0,
-            'saldo_actual' => 0,
+            'monto_inicial' => 0,
+            'monto_contado' => 0,
         ];
     }
 } catch (PDOException $e) {
@@ -26,8 +31,8 @@ try {
         'nombre' => 'Sin caja registrada',
         'ubicacion' => '-',
         'estado' => 'Cerrada',
-        'saldo_inicial' => 0,
-        'saldo_actual' => 0,
+        'monto_inicial' => 0,
+        'monto_contado' => 0,
     ];
     $error = 'No se pudo cargar la caja: ' . $e->getMessage();
 }
@@ -71,7 +76,7 @@ try {
             </div>
             <div class="col-md-6 mb-3">
               <p class="mb-1 text-muted">Saldo Actual</p>
-              <h4 class="text-success mb-0">L. <?php echo number_format((float)$caja['saldo_actual'], 2, '.', ','); ?></h4>
+              <h4 class="text-success mb-0">L. <?php echo number_format((float)($caja['monto_contado'] ?? 0), 2, '.', ','); ?></h4>
             </div>
           </div>
         </div>

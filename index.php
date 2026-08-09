@@ -74,13 +74,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <label class="form-label">Contraseña</label>
               <input type="password" class="form-control" name="password" placeholder="Contraseña" required>
             </div>
-            <div class="d-grid">
+            <div class="d-grid gap-2">
               <button type="submit" class="btn btn-primary">Entrar</button>
             </div>
           </form>
         </div>
       </div>
-      <p class="text-center text-muted mt-3">Version estatica generada para integracion con phpMyAdmin</p>
     </div>
     <script src="static/js/scripts.js"></script>
 </body>
