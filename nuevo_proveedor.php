@@ -1,3 +1,28 @@
+<?php
+require_once 'config/conexion.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nombre_empresa = trim($_POST['nombre_empresa'] ?? '');
+    $contacto = trim($_POST['contacto'] ?? '');
+    $rtn = trim($_POST['rtn'] ?? '');
+    $telefono = trim($_POST['telefono'] ?? '');
+    $correo = trim($_POST['correo'] ?? '');
+    $direccion = trim($_POST['direccion'] ?? '');
+
+    if ($nombre_empresa !== '') {
+        try {
+            $stmt = $conexion->prepare("INSERT INTO proveedores (nombre_empresa, contacto, rtn, telefono, correo, direccion, estado) VALUES (?, ?, ?, ?, ?, ?, 1)");
+            $stmt->execute([$nombre_empresa, $contacto, $rtn, $telefono, $correo, $direccion]);
+            header('Location: proveedores.php');
+            exit;
+        } catch (PDOException $e) {
+            $error = 'No se pudo guardar el proveedor: ' . $e->getMessage();
+        }
+    } else {
+        $error = 'El nombre de la empresa es obligatorio.';
+    }
+}
+?>
 <!doctype html>
 <html lang="es">
 
@@ -31,90 +56,45 @@
 
             <div class="card-body">
 
-                <form action="guardar_proveedor.php" method="POST">
+                <?php if (isset($error)) : ?>
+                    <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+                <?php endif; ?>
+
+                <form action="nuevo_proveedor.php" method="POST">
 
                     <div class="mb-3">
-
                         <label class="form-label">Nombre de la Empresa</label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            name="nombre_empresa"
-                            required>
-
+                        <input type="text" class="form-control" name="nombre_empresa" required>
                     </div>
 
                     <div class="mb-3">
-
                         <label class="form-label">Persona de Contacto</label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            name="contacto">
-
+                        <input type="text" class="form-control" name="contacto">
                     </div>
 
                     <div class="row">
-
                         <div class="col-md-6 mb-3">
-
                             <label class="form-label">RTN</label>
-
-                            <input
-                                type="text"
-                                class="form-control"
-                                name="rtn"
-                                maxlength="20">
-
+                            <input type="text" class="form-control" name="rtn" maxlength="20">
                         </div>
-
                         <div class="col-md-6 mb-3">
-
                             <label class="form-label">Teléfono</label>
-
-                            <input
-                                type="text"
-                                class="form-control"
-                                name="telefono">
-
+                            <input type="text" class="form-control" name="telefono">
                         </div>
-
                     </div>
 
                     <div class="mb-3">
-
                         <label class="form-label">Correo Electrónico</label>
-
-                        <input
-                            type="email"
-                            class="form-control"
-                            name="correo">
-
+                        <input type="email" class="form-control" name="correo">
                     </div>
 
                     <div class="mb-3">
-
                         <label class="form-label">Dirección</label>
-
-                        <textarea
-                            class="form-control"
-                            rows="3"
-                            name="direccion"></textarea>
-
+                        <textarea class="form-control" rows="3" name="direccion"></textarea>
                     </div>
 
                     <div class="text-end">
-
-                        <button
-                            type="submit"
-                            class="btn btn-success">
-
-                            Guardar Proveedor
-
-                        </button>
-
+                        <button type="submit" class="btn btn-success">Guardar Proveedor</button>
                     </div>
 
                 </form>

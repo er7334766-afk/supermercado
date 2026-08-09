@@ -1,3 +1,29 @@
+<?php
+require_once 'config/conexion.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nombre = trim($_POST['nombre'] ?? '');
+    $apellido = trim($_POST['apellido'] ?? '');
+    $identidad = trim($_POST['identidad'] ?? '');
+    $rtn = trim($_POST['rtn'] ?? '');
+    $telefono = trim($_POST['telefono'] ?? '');
+    $correo = trim($_POST['correo'] ?? '');
+    $direccion = trim($_POST['direccion'] ?? '');
+
+    if ($nombre !== '' && $apellido !== '' && $correo !== '') {
+        try {
+            $stmt = $conexion->prepare("INSERT INTO clientes (nombre, apellido, identidad, rtn, telefono, correo, direccion, estado) VALUES (?, ?, ?, ?, ?, ?, ?, 1)");
+            $stmt->execute([$nombre, $apellido, $identidad, $rtn, $telefono, $correo, $direccion]);
+            header('Location: clientes.php');
+            exit;
+        } catch (PDOException $e) {
+            $error = 'No se pudo guardar el cliente: ' . $e->getMessage();
+        }
+    } else {
+        $error = 'Completa los campos obligatorios.';
+    }
+}
+?>
 <!doctype html>
 <html lang="es">
 <head>
@@ -27,7 +53,11 @@
 
         <div class="card-body">
 
-            <form action="guardar_cliente.php" method="POST">
+            <?php if (isset($error)) : ?>
+                <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+            <?php endif; ?>
+
+            <form action="nuevo_cliente.php" method="POST">
 
                 <div class="row">
 
@@ -55,17 +85,17 @@
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Identidad</label>
-                        <input type="text" name="identidad" class="form-control" placeholder="0801-2000-00000" required>
+                        <input type="text" name="identidad" class="form-control" placeholder="0801-2000-00000">
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label">RTN</label>
-                        <input type="text" name="rtn" class="form-control" placeholder="0801-2000-00000" required>
+                        <input type="text" name="rtn" class="form-control" placeholder="0801-2000-00000">
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Teléfono</label>
-                        <input type="text" name="telefono" class="form-control" required>
+                        <input type="text" name="telefono" class="form-control">
                     </div>
 
                 </div>

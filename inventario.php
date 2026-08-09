@@ -1,4 +1,21 @@
-﻿<!doctype html>
+﻿<?php
+session_start();
+require_once 'config/conexion.php';
+
+if (empty($_SESSION['usuario_id'])) {
+    header('Location: index.php');
+    exit;
+}
+
+try {
+    $stmt = $conexion->prepare('SELECT p.codigo_barras, p.nombre, p.existencia, p.unidad_medida, d.nombre AS departamento FROM productos p LEFT JOIN departamentos d ON d.id_departamento = p.fk_departamento WHERE p.estado = 1 ORDER BY p.nombre ASC');
+    $stmt->execute();
+    $productos = $stmt->fetchAll();
+} catch (PDOException $e) {
+    $productos = [];
+}
+?>
+<!doctype html>
 <html lang="es">
   <head>
     <meta charset="utf-8">
@@ -17,9 +34,21 @@
       <div class="card">
         <div class="card-body">
           <table class="table table-bordered">
-            <thead><tr><th>Codigo</th><th>Producto</th><th>Stock</th><th>Ubicacion</th></tr></thead>
+            <thead><tr><th>Codigo</th><th>Producto</th><th>Stock</th><th>Unidad</th><th>Departamento</th></tr></thead>
             <tbody>
-              <tr><td>P-001</td><td>Producto 1</td><td>12</td><td>Almacén A</td></tr>
+              <?php if (!empty($productos)) : ?>
+                <?php foreach ($productos as $producto) : ?>
+                  <tr>
+                    <td><?php echo htmlspecialchars($producto['codigo_barras']); ?></td>
+                    <td><?php echo htmlspecialchars($producto['nombre']); ?></td>
+                    <td><?php echo intval($producto['existencia']); ?></td>
+                    <td><?php echo htmlspecialchars($producto['unidad_medida']); ?></td>
+                    <td><?php echo htmlspecialchars($producto['departamento'] ?? '-'); ?></td>
+                  </tr>
+                <?php endforeach; ?>
+              <?php else : ?>
+                <tr><td colspan="5" class="text-center text-muted">No hay productos en inventario.</td></tr>
+              <?php endif; ?>
             </tbody>
           </table>
         </div>

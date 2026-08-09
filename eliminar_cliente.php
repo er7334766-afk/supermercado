@@ -1,10 +1,16 @@
-
 <?php
+require_once 'config/conexion.php';
 
-    $id = $_GET["id"];
+$id_cliente = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-    echo "<h2>Cliente eliminado correctamente.</h2>";
+if ($id_cliente > 0) {
+    try {
+        $stmt = $conexion->prepare("DELETE FROM clientes WHERE id_cliente = ?");
+        $stmt->execute([$id_cliente]);
+    } catch (PDOException $e) {
+        $error = 'No se pudo eliminar el cliente: ' . $e->getMessage();
+    }
+}
 
-    echo "ID del cliente: " . $id;
-
-?>
+header('Location: clientes.php');
+exit;

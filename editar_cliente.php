@@ -1,3 +1,54 @@
+<?php
+require_once 'config/conexion.php';
+
+$cliente = [
+    'id_cliente' => 0,
+    'nombre' => '',
+    'apellido' => '',
+    'identidad' => '',
+    'rtn' => '',
+    'telefono' => '',
+    'correo' => '',
+    'direccion' => ''
+];
+
+$id_cliente = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id_cliente = isset($_POST['id_cliente']) ? (int)$_POST['id_cliente'] : 0;
+    $cliente['id_cliente'] = $id_cliente;
+    $cliente['nombre'] = trim($_POST['nombre'] ?? '');
+    $cliente['apellido'] = trim($_POST['apellido'] ?? '');
+    $cliente['identidad'] = trim($_POST['identidad'] ?? '');
+    $cliente['rtn'] = trim($_POST['rtn'] ?? '');
+    $cliente['telefono'] = trim($_POST['telefono'] ?? '');
+    $cliente['correo'] = trim($_POST['correo'] ?? '');
+    $cliente['direccion'] = trim($_POST['direccion'] ?? '');
+
+    if ($id_cliente > 0 && $cliente['nombre'] !== '' && $cliente['apellido'] !== '' && $cliente['correo'] !== '') {
+        try {
+            $stmt = $conexion->prepare("UPDATE clientes SET nombre = ?, apellido = ?, identidad = ?, rtn = ?, telefono = ?, correo = ?, direccion = ? WHERE id_cliente = ?");
+            $stmt->execute([$cliente['nombre'], $cliente['apellido'], $cliente['identidad'], $cliente['rtn'], $cliente['telefono'], $cliente['correo'], $cliente['direccion'], $id_cliente]);
+            header('Location: clientes.php');
+            exit;
+        } catch (PDOException $e) {
+            $error = 'No se pudo actualizar el cliente: ' . $e->getMessage();
+        }
+    } else {
+        $error = 'Completa los campos obligatorios.';
+    }
+}
+
+if ($id_cliente > 0) {
+    try {
+        $stmt = $conexion->prepare("SELECT id_cliente, nombre, apellido, identidad, rtn, telefono, correo, direccion FROM clientes WHERE id_cliente = ?");
+        $stmt->execute([$id_cliente]);
+        $cliente = $stmt->fetch(PDO::FETCH_ASSOC) ?: $cliente;
+    } catch (PDOException $e) {
+        $error = 'No se pudo cargar el cliente: ' . $e->getMessage();
+    }
+}
+?>
 <!doctype html>
 <html lang="es">
     <head>
@@ -29,9 +80,13 @@
 
             <div class="card-body">
 
-                <form action="actualizar_cliente.php" method="POST">
+                <?php if (isset($error)) : ?>
+                    <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+                <?php endif; ?>
 
-                    <input type="hidden" name="id_cliente" value="1">
+                <form action="editar_cliente.php" method="POST">
+
+                    <input type="hidden" name="id_cliente" value="<?php echo intval($cliente['id_cliente']); ?>">
 
                     <div class="row">
 
@@ -43,7 +98,7 @@
                                 type="text"
                                 class="form-control"
                                 name="nombre"
-                                value="Juan">
+                                value="<?php echo htmlspecialchars($cliente['nombre']); ?>">
 
                         </div>
 
@@ -55,7 +110,7 @@
                                 type="text"
                                 class="form-control"
                                 name="apellido"
-                                value="Pérez">
+                                value="<?php echo htmlspecialchars($cliente['apellido']); ?>">
 
                         </div>
 
@@ -71,9 +126,25 @@
                                 type="text"
                                 class="form-control"
                                 name="identidad"
-                                value="0801-2000-12345">
+                                value="<?php echo htmlspecialchars($cliente['identidad']); ?>">
 
                         </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">RTN</label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                name="rtn"
+                                value="<?php echo htmlspecialchars($cliente['rtn']); ?>">
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
 
                         <div class="col-md-6 mb-3">
 
@@ -83,21 +154,21 @@
                                 type="text"
                                 class="form-control"
                                 name="telefono"
-                                value="9999-9999">
+                                value="<?php echo htmlspecialchars($cliente['telefono']); ?>">
 
                         </div>
 
-                    </div>
+                        <div class="col-md-6 mb-3">
 
-                    <div class="mb-3">
+                            <label class="form-label">Correo</label>
 
-                        <label class="form-label">Correo</label>
+                            <input
+                                type="email"
+                                class="form-control"
+                                name="correo"
+                                value="<?php echo htmlspecialchars($cliente['correo']); ?>">
 
-                        <input
-                            type="email"
-                            class="form-control"
-                            name="correo"
-                            value="juan@gmail.com">
+                        </div>
 
                     </div>
 
@@ -108,7 +179,7 @@
                         <textarea
                             class="form-control"
                             rows="3"
-                            name="direccion">San Pedro Sula</textarea>
+                            name="direccion"><?php echo htmlspecialchars($cliente['direccion']); ?></textarea>
 
                     </div>
 

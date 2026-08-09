@@ -1,4 +1,5 @@
 <?php
+session_start();
 $current = basename($_SERVER['SCRIPT_NAME']);
 function active($page) {
     global $current;
@@ -31,11 +32,11 @@ function active($page) {
   <div class="dropdown">
     <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
       <img src="https://via.placeholder.com/32" alt="avatar" class="rounded-circle me-2">
-      <strong>Admin</strong>
+      <strong><?php echo htmlspecialchars($_SESSION['usuario_nombre'] ?? 'Usuario'); ?></strong>
     </a>
     <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser">
       <li><a class="dropdown-item" href="javascript:void(0)" data-action="coming-soon">Perfil</a></li>
-      <li><a class="dropdown-item" href="index.php">Cerrar sesion</a></li>
+      <li><a class="dropdown-item" href="logout.php">Cerrar sesion</a></li>
     </ul>
   </div>
 </nav>
