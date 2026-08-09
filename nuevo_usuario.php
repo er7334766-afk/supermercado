@@ -1,4 +1,11 @@
 <?php
+session_start();
+
+if (empty($_SESSION['usuario_id'])) {
+    header('Location: index.php');
+    exit;
+}
+
 require_once 'config/conexion.php';
 
 try {
