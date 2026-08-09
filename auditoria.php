@@ -9,7 +9,7 @@ if (empty($_SESSION['usuario_id'])) {
 
 try {
     $stmt = $conexion->prepare(
-        "SELECT a.id_auditoria, u.usuario AS usuario, a.accion, a.descripcion AS detalle, a.fecha "
+        "SELECT a.id_auditoria, u.usuario AS usuario, a.accion, a.descripcion AS detalle, a.fecha AS fecha_registro "
         . "FROM auditoria a LEFT JOIN usuarios u ON u.id_usuario = a.fk_usuario ORDER BY a.id_auditoria DESC"
     );
     $stmt->execute();
