@@ -34,6 +34,7 @@ try {
     <main class="content">
       <div class="d-flex justify-content-between align-items-center header-title">
         <h2>Departamentos</h2>
+        <a href="nuevo_departamento.php" class="btn btn-primary"> Nuevo departamento </a>
       </div>
 
       <?php if (isset($error)) : ?>
@@ -42,27 +43,93 @@ try {
 
       <div class="card">
         <div class="card-body">
-          <ul class="list-group">
-            <?php if (!empty($departamentos)) : ?>
-              <?php foreach ($departamentos as $departamento) : ?>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  <span>
-                    <strong><?php echo htmlspecialchars($departamento['nombre']); ?></strong>
-                    <?php if (!empty($departamento['descripcion'])) : ?>
-                      <div class="text-muted small"><?php echo htmlspecialchars($departamento['descripcion']); ?></div>
-                    <?php endif; ?>
-                  </span>
-                  <?php if (!empty($departamento['estado'])) : ?>
-                    <span class="badge bg-success">Activo</span>
-                  <?php else : ?>
-                    <span class="badge bg-secondary">Inactivo</span>
-                  <?php endif; ?>
-                </li>
-              <?php endforeach; ?>
-            <?php else : ?>
-              <li class="list-group-item text-muted">No hay departamentos registrados.</li>
-            <?php endif; ?>
-          </ul>
+       
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Departamento</th>
+                        <th>Descripción</th>
+                        <th>Estado</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                <?php if (!empty($departamentos)) : ?>
+
+                    <?php foreach ($departamentos as $departamento) : ?>
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    <?php echo htmlspecialchars($departamento['nombre']); ?>
+                                </strong>
+                            </td>
+
+                            <td>
+                                <?php echo htmlspecialchars($departamento['descripcion'] ?? ''); ?>
+                            </td>
+
+                            <td>
+                                <?php if (!empty($departamento['estado'])) : ?>
+                                    <span class="badge bg-success">Activo</span>
+                                <?php else : ?>
+                                    <span class="badge bg-secondary">Inactivo</span>
+                                <?php endif; ?>
+                            </td>
+
+                            <td class="text-end">
+
+                                <?php if (verificarAcceso('departamentos', 'editar')) : ?>
+
+                                    <a
+                                        href="editar_departamento.php?id=<?php echo intval($departamento['id_departamento']); ?>"
+                                        class="btn btn-warning btn-sm">
+
+                                        Editar
+
+                                    </a>
+
+                                <?php endif; ?>
+
+
+                                <?php if (verificarAcceso('departamentos', 'eliminar')) : ?>
+
+                                    <a
+                                        href="eliminar_departamento.php?id=<?php echo intval($departamento['id_departamento']); ?>"
+                                        class="btn btn-danger btn-sm"
+                                        onclick="return confirm('¿Está seguro de eliminar este departamento?');">
+
+                                        Eliminar
+
+                                    </a>
+
+                                <?php endif; ?>
+
+                            </td>
+
+                        </tr>
+
+                    <?php endforeach; ?>
+
+                <?php else : ?>
+
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">
+                            No hay departamentos registrados.
+                        </td>
+                    </tr>
+
+                <?php endif; ?>
+
+                </tbody>
+
+            </table>
+        </div>
         </div>
       </div>
     </main>

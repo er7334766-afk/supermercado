@@ -1,7 +1,10 @@
 <?php
+
+session_start();
+
 require_once 'config/conexion.php';
 require_once 'config/permisos.php';
-session_start();
+require_once 'config/acciones.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ventas.php');
@@ -15,70 +18,177 @@ if (empty($_SESSION['usuario_id'])) {
 
 requerirAccesoAccion('ventas', 'crear');
 
-$fk_cliente = isset($_POST['fk_cliente']) ? (int)$_POST['fk_cliente'] : 0;
-$numero_factura = trim((string)($_POST['numero_factura'] ?? ''));
-$fecha_venta = trim((string)($_POST['fecha_venta'] ?? date('Y-m-d H:i:s')));
-$metodo_pago = trim((string)($_POST['metodo_pago'] ?? 'Efectivo'));
-$monto_recibido = (float)($_POST['monto_recibido'] ?? 0);
-$productos = $_POST['producto'] ?? [];
-$precios = $_POST['precio'] ?? [];
-$cantidades = $_POST['cantidad'] ?? [];
+$fk_usuario = (int) $_SESSION['usuario_id'];
 
-// Si no se enviaron productos en el formulario, intentar tomar los items del carrito en BD
-if (empty($productos) && !empty($_SESSION['usuario_id'])) {
-    $stmtCart = $conexion->prepare('SELECT fk_producto, cantidad, precio_unitario FROM cart_items WHERE fk_usuario = ?');
-    $stmtCart->execute([(int)$_SESSION['usuario_id']]);
-    $cartItems = $stmtCart->fetchAll();
-    if (!empty($cartItems)) {
-        $productos = [];
-        $precios = [];
-        $cantidades = [];
-        foreach ($cartItems as $ci) {
-            $productos[] = (int)$ci['fk_producto'];
-            $precios[] = (float)$ci['precio_unitario'];
-            $cantidades[] = (int)$ci['cantidad'];
-        }
+$fk_cliente = !empty($_POST['fk_cliente'])
+    ? (int) $_POST['fk_cliente']
+    : null;
+
+$numero_factura = trim($_POST['numero_factura'] ?? '');
+
+$fecha_venta = trim($_POST['fecha_venta'] ?? '');
+
+if ($fecha_venta !== '') {
+    $fecha_venta = str_replace('T', ' ', $fecha_venta);
+
+    if (strlen($fecha_venta) === 16) {
+        $fecha_venta .= ':00';
     }
+} else {
+    $fecha_venta = date('Y-m-d H:i:s');
 }
+
+$metodo_pago = trim($_POST['metodo_pago'] ?? 'Efectivo');
+$monto_recibido = (float)($_POST['monto_recibido'] ?? 0);
+$descuento = (float)($_POST['descuento'] ?? 0);
 
 if ($numero_factura === '') {
     $numero_factura = 'FAC-' . date('YmdHis');
 }
 
-$subtotal = 0.0;
-$detalle = [];
-for ($i = 0; $i < count($productos); $i++) {
-    $productoId = (int)($productos[$i] ?? 0);
-    $precio = (float)($precios[$i] ?? 0);
-    $cantidad = (int)($cantidades[$i] ?? 0);
-    if ($productoId <= 0 || $cantidad <= 0) {
-        continue;
-    }
-    $lineaSubtotal = $precio * $cantidad;
-    $subtotal += $lineaSubtotal;
-    $detalle[] = [
-        'producto_id' => $productoId,
-        'precio' => $precio,
-        'cantidad' => $cantidad,
-        'linea_subtotal' => $lineaSubtotal,
-    ];
-}
-
-$descuento = (float)($_POST['descuento'] ?? 0.0);
-$impuesto = round($subtotal * 0.15, 2);
-$total = round($subtotal - $descuento + $impuesto, 2);
-$cambio = round($monto_recibido - $total, 2);
 
 try {
+
+    /* =============================
+       BUSCAR CAJA ABIERTA
+       ============================= */
+
+    $stmtApertura = $conexion->prepare("
+        SELECT id_apertura
+        FROM aperturas_caja
+        WHERE fk_usuario = ?
+          AND estado = 'Abierta'
+        ORDER BY id_apertura DESC
+        LIMIT 1
+    ");
+
+    $stmtApertura->execute([$fk_usuario]);
+
+    $apertura = $stmtApertura->fetch(PDO::FETCH_ASSOC);
+
+    if (!$apertura) {
+        throw new Exception(
+            'Debes tener una caja abierta antes de registrar una venta.'
+        );
+    }
+
+    $fk_apertura = (int)$apertura['id_apertura'];
+
+
+    /* =============================
+       OBTENER PRODUCTOS DEL CARRITO
+       ============================= */
+
+    $stmtCart = $conexion->prepare("
+        SELECT
+            c.fk_producto,
+            c.cantidad,
+            p.nombre,
+            p.precio_venta,
+            p.existencia
+        FROM cart_items c
+        INNER JOIN productos p
+            ON p.id_producto = c.fk_producto
+        WHERE c.fk_usuario = ?
+    ");
+
+    $stmtCart->execute([$fk_usuario]);
+
+    $productos = $stmtCart->fetchAll(PDO::FETCH_ASSOC);
+
+    if (empty($productos)) {
+        throw new Exception('El carrito está vacío.');
+    }
+
+
+    /* =============================
+       CALCULAR TOTALES
+       ============================= */
+
+    $subtotal = 0;
+
+    foreach ($productos as $producto) {
+
+        $cantidad = (int)$producto['cantidad'];
+        $precio = (float)$producto['precio_venta'];
+        $existencia = (int)$producto['existencia'];
+
+        if ($cantidad <= 0) {
+            throw new Exception(
+                'La cantidad de los productos debe ser mayor que cero.'
+            );
+        }
+
+        if ($cantidad > $existencia) {
+            throw new Exception(
+                'No hay suficiente existencia de: ' .
+                $producto['nombre']
+            );
+        }
+
+        $subtotal += $precio * $cantidad;
+    }
+
+    $subtotal = round($subtotal, 2);
+
+    $impuesto = round($subtotal * 0.15, 2);
+
+    $total = round(
+        $subtotal - $descuento + $impuesto,
+        2
+    );
+
+    $cambio = 0;
+
+    if ($metodo_pago === 'Efectivo') {
+
+        if ($monto_recibido < $total) {
+            throw new Exception(
+                'El monto recibido es menor que el total de la venta.'
+            );
+        }
+
+        $cambio = round(
+            $monto_recibido - $total,
+            2
+        );
+    }
+
+
+    /* =============================
+       INICIAR TRANSACCIÓN
+       ============================= */
+
     $conexion->beginTransaction();
 
-    $stmt = $conexion->prepare(
-        'INSERT INTO ventas (fk_cliente, fk_usuario, fk_apertura, numero_factura, fecha_venta, subtotal, descuento, impuesto, total, metodo_pago, monto_recibido, cambio, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)' 
-    );
-    $stmt->execute([
-        $fk_cliente > 0 ? $fk_cliente : null,
-        1,
-        1,
+
+    /* =============================
+       GUARDAR VENTA
+       ============================= */
+
+    $stmtVenta = $conexion->prepare("
+        INSERT INTO ventas (
+            fk_cliente,
+            fk_usuario,
+            fk_apertura,
+            numero_factura,
+            fecha_venta,
+            subtotal,
+            descuento,
+            impuesto,
+            total,
+            metodo_pago,
+            monto_recibido,
+            cambio,
+            estado
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+
+    $stmtVenta->execute([
+        $fk_cliente,
+        $fk_usuario,
+        $fk_apertura,
         $numero_factura,
         $fecha_venta,
         $subtotal,
@@ -90,33 +200,140 @@ try {
         $cambio,
         'Completada'
     ]);
-    $ventaId = (int)$conexion->lastInsertId();
 
-    $stmtDetalle = $conexion->prepare(
-        'INSERT INTO detalle_ventas (fk_venta, fk_producto, cantidad, precio_unitario, descuento, subtotal) VALUES (?, ?, ?, ?, ?, ?)' 
-    );
-    foreach ($detalle as $item) {
+    $id_venta = (int)$conexion->lastInsertId();
+
+
+    /* =============================
+       PREPARAR CONSULTAS
+       ============================= */
+
+    $stmtDetalle = $conexion->prepare("
+        INSERT INTO detalle_ventas (
+            fk_venta,
+            fk_producto,
+            cantidad,
+            precio_unitario,
+            descuento,
+            subtotal
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+    ");
+
+    $stmtActualizarStock = $conexion->prepare("
+        UPDATE productos
+        SET existencia = ?
+        WHERE id_producto = ?
+    ");
+
+    $stmtMovimiento = $conexion->prepare("
+        INSERT INTO movimientos_inventario (
+            fk_producto,
+            fk_usuario,
+            tipo_movimiento,
+            cantidad,
+            existencia_anterior,
+            existencia_nueva,
+            referencia,
+            observacion,
+            fecha_movimiento
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+    ");
+
+
+    /* =============================
+       GUARDAR PRODUCTOS
+       ============================= */
+
+    foreach ($productos as $producto) {
+
+        $fk_producto = (int)$producto['fk_producto'];
+
+        $cantidad = (int)$producto['cantidad'];
+
+        $precio = (float)$producto['precio_venta'];
+
+        $existencia_anterior =
+            (int)$producto['existencia'];
+
+        $existencia_nueva =
+            $existencia_anterior - $cantidad;
+
+        $subtotal_linea =
+            round($precio * $cantidad, 2);
+
+
+        /* Detalle de venta */
+
         $stmtDetalle->execute([
-            $ventaId,
-            $item['producto_id'],
-            $item['cantidad'],
-            $item['precio'],
+            $id_venta,
+            $fk_producto,
+            $cantidad,
+            $precio,
             0,
-            $item['linea_subtotal']
+            $subtotal_linea
+        ]);
+
+
+        /* Actualizar existencia */
+
+        $stmtActualizarStock->execute([
+            $existencia_nueva,
+            $fk_producto
+        ]);
+
+
+        /* Movimiento inventario */
+
+        $stmtMovimiento->execute([
+            $fk_producto,
+            $fk_usuario,
+            'Venta',
+            $cantidad,
+            $existencia_anterior,
+            $existencia_nueva,
+            $numero_factura,
+            'Salida de producto por venta'
         ]);
     }
 
-    // si usamos carrito, limpiarlo para el usuario
-    if (!empty($_SESSION['usuario_id'])) {
-        $stmtClear = $conexion->prepare('DELETE FROM cart_items WHERE fk_usuario = ?');
-        $stmtClear->execute([(int)$_SESSION['usuario_id']]);
-    }
+
+    /* =============================
+       VACIAR CARRITO
+       ============================= */
+
+    $stmtVaciar = $conexion->prepare("
+        DELETE FROM cart_items
+        WHERE fk_usuario = ?
+    ");
+
+    $stmtVaciar->execute([$fk_usuario]);
+
+
+    /* =============================
+       FINALIZAR
+       ============================= */
 
     $conexion->commit();
-    header('Location: ventas.php?success=1');
+
+    header(
+        'Location: ventas.php?success=1'
+    );
+
     exit;
-} catch (PDOException $e) {
-    $conexion->rollBack();
-    header('Location: nueva_venta.php?error=' . urlencode($e->getMessage()));
+
+
+} catch (Throwable $e) {
+
+    if ($conexion->inTransaction()) {
+        $conexion->rollBack();
+    }
+
+    header(
+        'Location: nueva_venta.php?error=' .
+        urlencode($e->getMessage())
+    );
+
     exit;
 }

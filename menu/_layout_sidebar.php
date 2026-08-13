@@ -90,6 +90,24 @@ function active($page) {
   </ul>
   <hr style="border-color: rgba(255,255,255,0.06)">
   <div class="mt-auto pb-3">
+    <!-- Usuario actual -->
+    <div class="mb-3 text-white">
+
+        <small class="text-white-50">
+            <?php echo htmlspecialchars(
+                obtenerNombreRol($_SESSION['usuario_rol'] ?? 0)
+            ); ?>
+        </small>
+        
+        <div>
+            <strong>
+                <?php echo htmlspecialchars($_SESSION['usuario_nombre'] ?? 'Usuario'); ?>
+            </strong>
+        </div>
+        
+    </div>
+
+    <hr style="border-color: rgba(255,255,255,0.15)">
     <a href="logout.php" class="d-flex align-items-center text-white text-decoration-none">
       <span class="me-2">Salir</span>
     </a>

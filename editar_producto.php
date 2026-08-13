@@ -8,6 +8,7 @@ if (empty($_SESSION['usuario_id'])) {
 
 require_once 'config/conexion.php';
 require_once 'config/permisos.php';
+require_once 'config/acciones.php';
 
 requerirAccesoAccion('productos', 'editar');
 

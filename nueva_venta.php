@@ -8,6 +8,11 @@ if (empty($_SESSION['usuario_id'])) {
 
 require_once 'config/conexion.php';
 require_once 'config/permisos.php';
+require_once 'config/acciones.php';
+
+if (!empty($_GET['error'])) {
+    $error = $_GET['error'];
+}
 
 requerirAccesoAccion('ventas', 'crear');
 
@@ -82,9 +87,9 @@ try {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            <!-- <tr>
                                 <td>
-                                    <select class="form-select" name="producto[]">
+                                    <select class="form-select" name="producto[]" >
                                         <option value="">Seleccione producto...</option>
                                         <?php foreach ($productos as $producto) : ?>
                                             <option value="<?php echo intval($producto['id_producto']); ?>" data-precio="<?php echo htmlspecialchars($producto['precio_venta']); ?>"><?php echo htmlspecialchars($producto['nombre']); ?></option>
@@ -97,7 +102,62 @@ try {
                                 <td class="align-middle">
                                     <button type="button" id="add_to_cart" class="btn btn-sm btn-primary">Agregar al carrito</button>
                                 </td>
-                            </tr>
+                            </tr> -->
+                            <tr>
+    <td>
+        <select class="form-select" id="producto_seleccion">
+            <option value="">Seleccione producto...</option>
+
+            <?php foreach ($productos as $producto) : ?>
+                <option
+                    value="<?php echo intval($producto['id_producto']); ?>"
+                    data-precio="<?php echo htmlspecialchars($producto['precio_venta']); ?>">
+                    
+                    <?php echo htmlspecialchars($producto['nombre']); ?>
+                </option>
+            <?php endforeach; ?>
+
+        </select>
+    </td>
+
+    <td>
+        <input
+            type="number"
+            class="form-control"
+            id="precio_seleccion"
+            step="0.01"
+            value="0.00"
+            readonly>
+    </td>
+
+    <td>
+        <input
+            type="number"
+            class="form-control"
+            id="cantidad_seleccion"
+            value="1"
+            min="1">
+    </td>
+
+    <td>
+        <input
+            type="number"
+            class="form-control"
+            id="subtotal_seleccion"
+            step="0.01"
+            value="0.00"
+            readonly>
+    </td>
+
+    <td class="align-middle">
+        <button
+            type="button"
+            id="add_to_cart"
+            class="btn btn-sm btn-primary">
+            Agregar al carrito
+        </button>
+    </td>
+</tr>
                         </tbody>
                     </table>
                     <div class="mt-3">
@@ -105,6 +165,7 @@ try {
                         <div id="cart_container">
                             <div class="text-muted">Cargando carrito...</div>
                         </div>
+                        <div id="cart_inputs"></div>
                         <div class="mt-2">
                             <button type="button" id="clear_cart" class="btn btn-sm btn-danger">Vaciar carrito</button>
                         </div>
@@ -121,7 +182,7 @@ try {
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Monto Recibido</label>
-                            <input type="number" class="form-control" step="0.01" name="monto_recibido">
+                            <input type="number" class="form-control" step="0.01" name="monto_recibido" required>
                         </div>
                     </div>
                     <hr>
@@ -150,19 +211,40 @@ try {
     document.addEventListener('DOMContentLoaded', function () {
         var cartItems = [];
 
+        // function updateRow(row) {
+        //     var select = row.querySelector('select[name="producto[]"]');
+        //     var priceInput = row.querySelector('input[name="precio[]"]');
+        //     var qtyInput = row.querySelector('input[name="cantidad[]"]');
+        //     var subtotalInput = row.querySelector('input[name="subtotal[]"]');
+        //     var price = 0;
+        //     if (select && select.selectedOptions && select.selectedOptions[0]) {
+        //         price = parseFloat(select.selectedOptions[0].dataset.precio || 0);
+        //     }
+        //     priceInput.value = price.toFixed(2);
+        //     var qty = parseFloat(qtyInput.value) || 0;
+        //     subtotalInput.value = (price * qty).toFixed(2);
+        // }
         function updateRow(row) {
-            var select = row.querySelector('select[name="producto[]"]');
-            var priceInput = row.querySelector('input[name="precio[]"]');
-            var qtyInput = row.querySelector('input[name="cantidad[]"]');
-            var subtotalInput = row.querySelector('input[name="subtotal[]"]');
-            var price = 0;
-            if (select && select.selectedOptions && select.selectedOptions[0]) {
-                price = parseFloat(select.selectedOptions[0].dataset.precio || 0);
-            }
-            priceInput.value = price.toFixed(2);
-            var qty = parseFloat(qtyInput.value) || 0;
-            subtotalInput.value = (price * qty).toFixed(2);
-        }
+
+    var select = row.querySelector('#producto_seleccion');
+    var priceInput = row.querySelector('#precio_seleccion');
+    var qtyInput = row.querySelector('#cantidad_seleccion');
+    var subtotalInput = row.querySelector('#subtotal_seleccion');
+
+    var price = 0;
+
+    if (select && select.selectedOptions && select.selectedOptions[0]) {
+        price = parseFloat(
+            select.selectedOptions[0].dataset.precio || 0
+        );
+    }
+
+    priceInput.value = price.toFixed(2);
+
+    var qty = parseFloat(qtyInput.value) || 0;
+
+    subtotalInput.value = (price * qty).toFixed(2);
+}
 
         function updateTotals() {
             var subtotal = 0;
@@ -205,47 +287,147 @@ try {
             }).catch(function () { document.getElementById('cart_container').innerHTML = '<div class="text-danger">Error cargando carrito</div>'; });
         }
 
+        // function renderCart() {
+        //     var container = document.getElementById('cart_container');
+        //     if (!cartItems || cartItems.length === 0) {
+        //         container.innerHTML = '<div class="text-muted">El carrito está vacío.</div>';
+        //         return;
+        //     }
+        //     var html = '<table class="table table-sm"><thead><tr><th>Producto</th><th>Precio</th><th>Cantidad</th><th>Subtotal</th><th></th></tr></thead><tbody>';
+        //     cartItems.forEach(function (it) {
+        //         var lineSub = (parseFloat(it.precio_unitario) || 0) * (parseInt(it.cantidad) || 0);
+        //         html += '<tr data-producto="' + escapeHtml(it.fk_producto || it.fk_producto || '') + '">';
+        //         html += '<td>' + escapeHtml(it.nombre || '') + '</td>';
+        //         html += '<td>L. ' + (parseFloat(it.precio_unitario) || 0).toFixed(2) + '</td>';
+        //         html += '<td><input type="number" min="0" class="form-control form-control-sm cart-qty" value="' + (parseInt(it.cantidad) || 0) + '" style="width:80px"></td>';
+        //         html += '<td>L. ' + lineSub.toFixed(2) + '</td>';
+        //         html += '<td><button class="btn btn-sm btn-danger btn-remove">Eliminar</button></td>';
+        //         html += '</tr>';
+        //     });
+        //     html += '</tbody></table>';
+        //     container.innerHTML = html;
+        // }
+
         function renderCart() {
-            var container = document.getElementById('cart_container');
-            if (!cartItems || cartItems.length === 0) {
-                container.innerHTML = '<div class="text-muted">El carrito está vacío.</div>';
-                return;
-            }
-            var html = '<table class="table table-sm"><thead><tr><th>Producto</th><th>Precio</th><th>Cantidad</th><th>Subtotal</th><th></th></tr></thead><tbody>';
-            cartItems.forEach(function (it) {
-                var lineSub = (parseFloat(it.precio_unitario) || 0) * (parseInt(it.cantidad) || 0);
-                html += '<tr data-producto="' + escapeHtml(it.fk_producto || it.fk_producto || '') + '">';
-                html += '<td>' + escapeHtml(it.nombre || '') + '</td>';
-                html += '<td>L. ' + (parseFloat(it.precio_unitario) || 0).toFixed(2) + '</td>';
-                html += '<td><input type="number" min="0" class="form-control form-control-sm cart-qty" value="' + (parseInt(it.cantidad) || 0) + '" style="width:80px"></td>';
-                html += '<td>L. ' + lineSub.toFixed(2) + '</td>';
-                html += '<td><button class="btn btn-sm btn-danger btn-remove">Eliminar</button></td>';
-                html += '</tr>';
-            });
-            html += '</tbody></table>';
-            container.innerHTML = html;
-        }
+
+    var container = document.getElementById('cart_container');
+    var inputsContainer = document.getElementById('cart_inputs');
+
+    inputsContainer.innerHTML = '';
+
+    if (!cartItems || cartItems.length === 0) {
+        container.innerHTML = '<div class="text-muted">El carrito está vacío.</div>';
+        return;
+    }
+
+    var html = '<table class="table table-sm">';
+    html += '<thead>';
+    html += '<tr>';
+    html += '<th>Producto</th>';
+    html += '<th>Precio</th>';
+    html += '<th>Cantidad</th>';
+    html += '<th>Subtotal</th>';
+    html += '<th></th>';
+    html += '</tr>';
+    html += '</thead>';
+    html += '<tbody>';
+
+    cartItems.forEach(function (it) {
+
+        var precio = parseFloat(it.precio_unitario) || 0;
+        var cantidad = parseInt(it.cantidad) || 0;
+        var subtotal = precio * cantidad;
+
+        html += '<tr data-producto="' + it.fk_producto + '">';
+
+        html += '<td>' + escapeHtml(it.nombre || '') + '</td>';
+
+        html += '<td>L. ' + precio.toFixed(2) + '</td>';
+
+        html += '<td>';
+        html += '<input type="number" min="1" ';
+        html += 'class="form-control form-control-sm cart-qty" ';
+        html += 'value="' + cantidad + '" style="width:80px">';
+        html += '</td>';
+
+        html += '<td>L. ' + subtotal.toFixed(2) + '</td>';
+
+        html += '<td>';
+        html += '<button type="button" ';
+        html += 'class="btn btn-sm btn-danger btn-remove">';
+        html += 'Eliminar';
+        html += '</button>';
+        html += '</td>';
+
+        html += '</tr>';
+
+        // Datos reales que se enviarán a guardar_venta.php
+        inputsContainer.innerHTML +=
+            '<input type="hidden" name="producto[]" value="' + it.fk_producto + '">' +
+            '<input type="hidden" name="precio[]" value="' + precio.toFixed(2) + '">' +
+            '<input type="hidden" name="cantidad[]" value="' + cantidad + '">' +
+            '<input type="hidden" name="subtotal[]" value="' + subtotal.toFixed(2) + '">';
+    });
+
+    html += '</tbody>';
+    html += '</table>';
+
+    container.innerHTML = html;
+}
 
         function escapeHtml(text) {
             return String(text).replace(/[&"'<>]/g, function (m) { return ({'&':'&amp;','"':'&quot;',"'":'&#39;','<':'&lt;','>':'&gt;'})[m]; });
         }
 
         // events
-        document.querySelectorAll('select[name="producto[]"]').forEach(function (sel) {
-            sel.addEventListener('change', function (e) {
-                var row = e.target.closest('tr');
-                updateRow(row);
-                updateTotals();
-            });
+        // document.querySelectorAll('select[name="producto[]"]').forEach(function (sel) {
+        //     sel.addEventListener('change', function (e) {
+        //         var row = e.target.closest('tr');
+        //         updateRow(row);
+        //         updateTotals();
+        //     });
+        // });
+
+        // document.querySelectorAll('input[name="cantidad[]"]').forEach(function (inp) {
+        //     inp.addEventListener('input', function (e) {
+        //         var row = e.target.closest('tr');
+        //         updateRow(row);
+        //         updateTotals();
+        //     });
+        // });
+
+        var selProducto = document.getElementById('producto_seleccion');
+        var precioProducto = document.getElementById('precio_seleccion');
+        var cantidadProducto = document.getElementById('cantidad_seleccion');
+        var subtotalProducto = document.getElementById('subtotal_seleccion');
+
+        selProducto.addEventListener('change', function () {
+
+            var opcion = selProducto.options[selProducto.selectedIndex];
+
+            var precio = parseFloat(opcion.dataset.precio) || 0;
+            var cantidad = parseInt(cantidadProducto.value) || 1;
+
+            precioProducto.value = precio.toFixed(2);
+            subtotalProducto.value = (precio * cantidad).toFixed(2);
         });
 
-        document.querySelectorAll('input[name="cantidad[]"]').forEach(function (inp) {
-            inp.addEventListener('input', function (e) {
-                var row = e.target.closest('tr');
-                updateRow(row);
-                updateTotals();
-            });
+        cantidadProducto.addEventListener('input', function () {
+
+            var precio = parseFloat(precioProducto.value) || 0;
+            var cantidad = parseInt(cantidadProducto.value) || 1;
+
+            subtotalProducto.value = (precio * cantidad).toFixed(2);
         });
+
+                cantidadProducto.addEventListener('input', function () {
+
+                    var precio = parseFloat(precioProducto.value) || 0;
+                    var cantidad = parseInt(cantidadProducto.value) || 1;
+
+                    subtotalProducto.value = (precio * cantidad).toFixed(2);
+
+                });
 
         document.getElementById('descuento').addEventListener('input', function () { updateTotals(); });
         var montoRec = document.querySelector('input[name="monto_recibido"]');
@@ -255,8 +437,8 @@ try {
         var addBtn = document.getElementById('add_to_cart');
         if (addBtn) addBtn.addEventListener('click', function () {
             var row = addBtn.closest('tr');
-            var sel = row.querySelector('select[name="producto[]"]');
-            var qty = row.querySelector('input[name="cantidad[]"]');
+            var sel = row.querySelector('#producto_seleccion');
+            var qty = row.querySelector('#cantidad_seleccion');
             var producto = sel.value || '';
             var cantidad = parseInt(qty.value) || 1;
             if (!producto) { alert('Seleccione un producto'); return; }
@@ -293,9 +475,12 @@ try {
         });
 
         // inicializa
-        document.querySelectorAll('tr').forEach(function (r) { if (r.querySelector('select[name="producto[]"]')) updateRow(r); });
-        loadCart();
-        updateTotals();
+        // document.querySelectorAll('tr').forEach(function (r) { if (r.querySelector('select[name="producto[]"]')) updateRow(r); });
+        // loadCart();
+        // updateTotals();
+
+        var filaProducto = document.getElementById('producto_seleccion').closest('tr');
+updateRow(filaProducto);
     });
     </script>
     </body>
