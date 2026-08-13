@@ -1,45 +1,262 @@
-/* Global overrides for the static site */
+/* ========================================
+   SUPERMERCADO VICTORIA
+   Paleta Azul + Naranja
+======================================== */
+
 body {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  background: #f8f9fa;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto,
+                 "Helvetica Neue", Arial !important;
+    background-color: #f5f7fa !important;
+    color: #1f2937 !important;
 }
+
+
+
+/* =====================
+   SIDEBAR
+===================== */
+
 .sidebar {
-  min-width: 220px;
-  max-width: 220px;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  padding-top: 56px;
-  background: #343a40;
-  color: #fff;
+    min-width: 220px !important;
+    max-width: 220px !important;
+    height: 100vh !important;
+
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+
+    padding-top: 56px !important;
+
+    background-color: #123a63 !important;
+    color: #ffffff !important;
 }
+
 .sidebar a {
-  color: #ced4da;
+    color: #dce6f0 !important;
+    border-radius: 6px !important;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease !important;
 }
+
+.sidebar a:hover {
+    background-color: rgba(255, 255, 255, 0.10) !important;
+    color: #ffffff !important;
+}
+
 .sidebar a.active {
-  background: rgba(255,255,255,0.08);
-  color: #fff;
+    background-color: #f28c28 !important;
+    color: #ffffff !important;
 }
+
+
+/* Nombre supermercado */
+
+.sidebar .fs-4 {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+}
+
+
+/* =====================
+   CONTENIDO
+===================== */
+
 .content {
-  margin-left: 240px;
-  padding: 24px;
+    margin-left: 240px !important;
+    padding: 24px !important;
 }
-.card {
-  border: 1px solid rgba(0,0,0,0.05);
-}
+
+
+/* =====================
+   TITULOS
+===================== */
+
 .header-title {
-  margin-bottom: 16px;
+    margin-bottom: 16px !important;
 }
+
+.header-title h2 {
+    color: #123a63 !important;
+    font-weight: 600 !important;
+}
+
+
+/* =====================
+   CARDS
+===================== */
+
+.card {
+    border: 1px solid #e5e7eb !important;
+    border-radius: 10px !important;
+    background-color: #ffffff !important;
+
+    box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.05) !important;
+}
+
+.card-title {
+    color: #123a63 !important;
+}
+
+
+/* =====================
+   BOTÓN PRINCIPAL
+===================== */
+
+.btn-primary {
+    background-color: #f28c28 !important;
+    border-color: #f28c28 !important;
+    color: #ffffff !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: #dc7615 !important;
+    border-color: #dc7615 !important;
+    color: #ffffff !important;
+}
+
+
+/* =====================
+   BOTÓN AZUL
+===================== */
+
+.btn-info {
+    background-color: #123a63 !important;
+    border-color: #123a63 !important;
+    color: #ffffff !important;
+}
+
+.btn-info:hover,
+.btn-info:focus {
+    background-color: #0d2e50 !important;
+    border-color: #0d2e50 !important;
+    color: #ffffff !important;
+}
+
+
+/* =====================
+   BOTÓN SUCCESS
+===================== */
+
+.btn-success {
+    background-color: #123a63 !important;
+    border-color: #123a63 !important;
+    color: #ffffff !important;
+}
+
+.btn-success:hover {
+    background-color: #0d2e50 !important;
+    border-color: #0d2e50 !important;
+}
+
+
+/* =====================
+   TABLAS
+===================== */
+
+.table thead th {
+    background-color: #123a63 !important;
+    color: #ffffff !important;
+    border-color: #123a63 !important;
+}
+
+.table-hover tbody tr:hover > * {
+    background-color: #fff3e6 !important;
+}
+
+
+/* =====================
+   FORMULARIOS
+===================== */
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #f28c28 !important;
+
+    box-shadow:
+        0 0 0 0.20rem rgba(242, 140, 40, 0.20) !important;
+}
+
+
+/* =====================
+   BADGES
+===================== */
+
+.badge.bg-primary {
+    background-color: #123a63 !important;
+}
+
+
+/* Los estados correctos siguen verdes */
+
+.badge.bg-success {
+    background-color: #198754 !important;
+}
+
+
+/* =====================
+   LINKS
+===================== */
+
+.content a:not(.btn) {
+    color: #123a63;
+}
+
+.content a:not(.btn):hover {
+    color: #f28c28;
+}
+
+
+/* =====================
+   LOGIN
+===================== */
+
 .login-wrapper {
-  max-width: 420px;
-  margin: 60px auto;
+    max-width: 420px !important;
+    margin: 60px auto !important;
 }
+
+
+/* =====================
+   FOOTER
+===================== */
+
 .footer {
-  padding: 16px 24px;
-  color: #6c757d;
+    padding: 16px 24px !important;
+    color: #6c757d !important;
 }
+
+
+/* =====================
+   RESPONSIVE
+===================== */
+
 @media (max-width: 768px) {
-  .sidebar { display: none; }
-  .content { margin-left: 0; }
+
+    .sidebar {
+        display: none !important;
+    }
+
+    .content {
+        margin-left: 0 !important;
+        padding: 16px !important;
+    }
+
+}
+
+.sidebar {
+    background-color: #123a63 !important;
+}
+
+.sidebar .nav-link.active {
+    background-color: #f28c28 !important;
+    color: white !important;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #f28c28 !important;
+    color: white !important;
 }

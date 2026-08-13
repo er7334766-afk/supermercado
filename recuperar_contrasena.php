@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Cambiar Contraseña - Sistema</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="static/css/styles.css">
+    <link rel="stylesheet" href="/supermercado-main/static/css/styles.css?v=3">
     <style>
       .change-wrapper { max-width: 480px; margin: 60px auto; }
     </style>

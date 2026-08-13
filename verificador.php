@@ -86,6 +86,8 @@ $porcentaje = round(($exitosos / $total) * 100, 1);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verificador - Sistema de Permisos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/supermercado-main/static/css/styles.css?v=3">
+
     <style>
         body { padding: 20px; background-color: #f5f5f5; }
         .container { max-width: 1000px; }

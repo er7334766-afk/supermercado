@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <title>Nuevo Producto</title>
 
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="static/css/styles.css">
+        <link rel="stylesheet" href="/supermercado-main/static/css/styles.css?v=3">
     </head>
 
     <body>
