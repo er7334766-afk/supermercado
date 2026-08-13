@@ -73,10 +73,6 @@ try {
       <?php endif; ?>
       <div class="d-flex justify-content-between align-items-center header-title">
         <h2>Inicio</h2>
-        <div>
-          <button class="btn btn-outline-secondary me-2">Ayuda</button>
-          <button class="btn btn-primary">Nuevo</button>
-        </div>
       </div>
 
       <div class="row g-3">
