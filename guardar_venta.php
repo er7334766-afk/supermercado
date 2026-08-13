@@ -1,5 +1,6 @@
 <?php
 require_once 'config/conexion.php';
+session_start();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ventas.php');
@@ -14,6 +15,23 @@ $monto_recibido = (float)($_POST['monto_recibido'] ?? 0);
 $productos = $_POST['producto'] ?? [];
 $precios = $_POST['precio'] ?? [];
 $cantidades = $_POST['cantidad'] ?? [];
+
+// Si no se enviaron productos en el formulario, intentar tomar los items del carrito en BD
+if (empty($productos) && !empty($_SESSION['usuario_id'])) {
+    $stmtCart = $conexion->prepare('SELECT fk_producto, cantidad, precio_unitario FROM cart_items WHERE fk_usuario = ?');
+    $stmtCart->execute([(int)$_SESSION['usuario_id']]);
+    $cartItems = $stmtCart->fetchAll();
+    if (!empty($cartItems)) {
+        $productos = [];
+        $precios = [];
+        $cantidades = [];
+        foreach ($cartItems as $ci) {
+            $productos[] = (int)$ci['fk_producto'];
+            $precios[] = (float)$ci['precio_unitario'];
+            $cantidades[] = (int)$ci['cantidad'];
+        }
+    }
+}
 
 if ($numero_factura === '') {
     $numero_factura = 'FAC-' . date('YmdHis');
@@ -38,9 +56,9 @@ for ($i = 0; $i < count($productos); $i++) {
     ];
 }
 
-$descuento = 0.0;
+$descuento = (float)($_POST['descuento'] ?? 0.0);
 $impuesto = round($subtotal * 0.15, 2);
-$total = round($subtotal + $impuesto, 2);
+$total = round($subtotal - $descuento + $impuesto, 2);
 $cambio = round($monto_recibido - $total, 2);
 
 try {
@@ -78,6 +96,12 @@ try {
             0,
             $item['linea_subtotal']
         ]);
+    }
+
+    // si usamos carrito, limpiarlo para el usuario
+    if (!empty($_SESSION['usuario_id'])) {
+        $stmtClear = $conexion->prepare('DELETE FROM cart_items WHERE fk_usuario = ?');
+        $stmtClear->execute([(int)$_SESSION['usuario_id']]);
     }
 
     $conexion->commit();

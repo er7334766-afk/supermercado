@@ -6,6 +6,12 @@ if (empty($_SESSION['usuario_id'])) {
     exit;
 }
 
+// Control de acceso por rol: solo administradores (rol 1) pueden ver esta página
+if (!isset($_SESSION['usuario_rol']) || (int)$_SESSION['usuario_rol'] !== 1) {
+  header('Location: inicio.php?error=' . urlencode('Acceso denegado'));
+  exit;
+}
+
 require_once 'config/conexion.php';
 
 try {

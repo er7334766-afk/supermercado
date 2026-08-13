@@ -19,7 +19,9 @@ function active($page) {
     <li><a href="proveedores.php" class="nav-link <?php echo active('proveedores.php'); ?>">Proveedores</a></li>
     <li><a href="inventario.php" class="nav-link <?php echo active('inventario.php'); ?>">Inventario</a></li>
     <li><a href="reportes.php" class="nav-link <?php echo active('reportes.php'); ?>">Reportes</a></li>
+    <?php if (!empty($_SESSION['usuario_rol']) && (int)$_SESSION['usuario_rol'] === 1): ?>
     <li><a href="usuarios.php" class="nav-link <?php echo active('usuarios.php'); ?>">Usuarios</a></li>
+    <?php endif; ?>
     <li><a href="departamentos.php" class="nav-link <?php echo active('departamentos.php'); ?>">Departamentos</a></li>
     <li><a href="devoluciones.php" class="nav-link <?php echo active('devoluciones.php'); ?>">Devoluciones</a></li>
     <li><a href="auditoria.php" class="nav-link <?php echo active('auditoria.php'); ?>">Auditoria</a></li>
@@ -28,14 +30,9 @@ function active($page) {
     <li><a href="facturacion.php" class="nav-link <?php echo active('facturacion.php'); ?>">Facturacion</a></li>
   </ul>
   <hr style="border-color: rgba(255,255,255,0.06)">
-  <div class="dropdown">
-    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
-      <img src="https://via.placeholder.com/32" alt="avatar" class="rounded-circle me-2">
-      <strong><?php echo htmlspecialchars($_SESSION['usuario_nombre'] ?? 'Usuario'); ?></strong>
+  <div class="mt-auto pb-3">
+    <a href="logout.php" class="d-flex align-items-center text-white text-decoration-none">
+      <span class="me-2">Salir</span>
     </a>
-    <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser">
-      <li><a class="dropdown-item" href="javascript:void(0)" data-action="coming-soon">Perfil</a></li>
-      <li><a class="dropdown-item" href="logout.php">Cerrar sesion</a></li>
-    </ul>
   </div>
 </nav>
