@@ -1,7 +1,7 @@
 <?php
 
     $host ="localhost";
-    $port = "3307"; // cambiar el puerto si es necesario yo utilizo el 3307 
+    $port = "3306"; // cambiar el puerto si es necesario yo utilizo el 3307 
     $db = "p_supermercado";
     $user = "root";
     $pass = "";

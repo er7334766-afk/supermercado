@@ -85,7 +85,10 @@ try {
     <main class="content">
       <div class="header-title d-flex justify-content-between align-items-center">
         <h2>Caja</h2>
-        <!-- <a class="btn btn-primary" href="javascript:void(0)" data-action="coming-soon">Cerrar turno</a> -->
+        <div>
+          <a class="btn btn-primary me-2" href="nueva_apertura.php">Abrir caja</a>
+          <a class="btn btn-outline-primary" href="nueva_caja.php">Crear caja</a>
+        </div>
       </div>
       <?php if (isset($error)) : ?>
         <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>

@@ -39,7 +39,9 @@ try {
     <main class="content">
       <div class="d-flex justify-content-between align-items-center header-title">
         <h2>Ventas</h2>
-        <a href="nueva_venta.php" class="btn btn-primary">Nueva venta</a>
+        <div>
+          <a href="nueva_venta.php" class="btn btn-primary">Nueva venta</a>
+        </div>
       </div>
 
       <?php if (!empty($mensajeExito)) : ?>

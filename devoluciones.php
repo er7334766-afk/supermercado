@@ -24,6 +24,11 @@ try {
     $devoluciones = [];
     $error = 'No se pudieron cargar las devoluciones: ' . $e->getMessage();
 }
+
+  $mensajeExito = '';
+  if (isset($_GET['success'])) {
+    $mensajeExito = 'Devolución registrada correctamente.';
+  }
 ?>
 <!doctype html>
 <html lang="es">
@@ -39,8 +44,13 @@ try {
     <main class="content">
       <div class="d-flex justify-content-between align-items-center header-title">
         <h2>Devoluciones</h2>
-        <a href="javascript:void(0)" data-action="coming-soon" class="btn btn-primary">Nueva devolucion</a>
+        <div>
+          <a href="nueva_devolucion.php" class="btn btn-primary">Nueva devolucion</a>
+        </div>
       </div>
+      <?php if (!empty($mensajeExito)) : ?>
+        <div class="alert alert-success"><?php echo htmlspecialchars($mensajeExito); ?></div>
+      <?php endif; ?>
       <?php if (isset($error)) : ?>
         <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
       <?php endif; ?>
@@ -54,6 +64,7 @@ try {
                 <th>Motivo</th>
                 <th>Fecha</th>
                 <th>Estado</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -65,6 +76,7 @@ try {
                     <td><?php echo htmlspecialchars($devolucion['motivo']); ?></td>
                     <td><?php echo htmlspecialchars($devolucion['fecha_devolucion']); ?></td>
                     <td><span class="badge bg-info text-dark"><?php echo htmlspecialchars($devolucion['estado']); ?></span></td>
+                    <td><a class="btn btn-sm btn-outline-primary" href="devolucion_detalle.php?id=<?php echo intval($devolucion['id_devolucion']); ?>">Ver</a></td>
                   </tr>
                 <?php endforeach; ?>
               <?php else : ?>

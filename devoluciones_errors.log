@@ -1,0 +1,1 @@
+2026-08-13T22:56:27+02:00 - PDOException: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`p_supermercado`.`devoluciones`, CONSTRAINT `fk_devoluciones_usuario` FOREIGN KEY (`fk_usuario`) REFERENCES `usuarios` (`id_usuario`) ON UPDATE CASCADE)

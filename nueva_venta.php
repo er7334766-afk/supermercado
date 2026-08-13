@@ -33,6 +33,15 @@ try {
     $productos = [];
     $error = 'No se pudieron cargar los productos: ' . $e->getMessage();
 }
+
+try {
+    $stmt = $conexion->prepare("SELECT a.id_apertura, a.fk_caja, a.fk_usuario, a.monto_contado, a.fecha_apertura, c.nombre AS caja_nombre FROM aperturas_caja a LEFT JOIN cajas c ON c.id_caja = a.fk_caja WHERE a.estado = 'Abierta' ORDER BY a.id_apertura DESC");
+    $stmt->execute();
+    $aperturas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $aperturas = [];
+    $error = 'No se pudieron cargar las aperturas: ' . $e->getMessage();
+}
 ?>
 <!doctype html>
 <html lang="es">
@@ -73,6 +82,17 @@ try {
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Fecha</label>
                             <input type="datetime-local" class="form-control" name="fecha_venta" value="<?php echo date('Y-m-d\TH:i'); ?>">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Apertura / Caja</label>
+                            <select class="form-select" name="fk_apertura" required>
+                                <option value="">Seleccione apertura...</option>
+                                <?php foreach ($aperturas as $ap) : ?>
+                                    <option value="<?php echo intval($ap['id_apertura']); ?>">
+                                        <?php echo htmlspecialchars(($ap['caja_nombre'] ?? 'Caja') . ' - ' . date('Y-m-d H:i', strtotime($ap['fecha_apertura'])) . ' - Saldo: L. ' . number_format((float)($ap['monto_contado'] ?? 0),2,'.',',')); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                     </div>
                     <hr>

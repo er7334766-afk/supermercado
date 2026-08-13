@@ -39,7 +39,9 @@ try {
     <main class="content">
       <div class="d-flex justify-content-between align-items-center header-title">
         <h2>Compras</h2>
-        <a href="nueva_compra.php" class="btn btn-primary">Nueva compra</a>
+        <div>
+          <a href="nueva_compra.php" class="btn btn-primary">Nueva compra</a>
+        </div>
       </div>
       <?php if (!empty($mensajeExito)) : ?>
         <div class="alert alert-success"><?php echo htmlspecialchars($mensajeExito); ?></div>

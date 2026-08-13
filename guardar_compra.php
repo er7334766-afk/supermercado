@@ -9,6 +9,7 @@ if (empty($_SESSION['usuario_id'])) {
 require_once 'config/conexion.php';
 require_once 'config/permisos.php';
 require_once 'config/acciones.php';
+require_once 'config/auditoria.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: compras.php');
@@ -84,6 +85,15 @@ try {
     }
 
     $conexion->commit();
+
+    // Registrar auditoría
+    try {
+        $detalle = 'Compra #' . $compraId . ', total: L. ' . number_format((float)$total, 2, '.', ',') . ', proveedor: ' . ($fk_proveedor > 0 ? $fk_proveedor : 'N/A');
+        registrarAuditoria($conexion, $fk_usuario, 'Crear compra', $detalle);
+    } catch (Throwable $e) {
+        // no bloquear la respuesta principal
+    }
+
     header('Location: compras.php?success=1');
     exit;
 } catch (PDOException $e) {

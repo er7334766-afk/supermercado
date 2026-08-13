@@ -1,6 +1,7 @@
 ﻿<?php
 session_start();
 require_once 'config/conexion.php';
+require_once 'config/auditoria.php';
 
 if (isset($_SESSION['usuario_id'])) {
     header('Location: inicio.php');
@@ -35,8 +36,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['usuario_nombre'] = trim(($user['nombre'] ?? '') . ' ' . ($user['apellido'] ?? ''));
                 $_SESSION['usuario_usuario'] = $user['usuario'];
                 $_SESSION['usuario_rol'] = (int)$user['fk_rol'];
-                header('Location: inicio.php');
-                exit;
+              // Registrar en auditoría el ingreso exitoso
+              try {
+                registrarAuditoria($conexion, (int)$user['id_usuario'], 'Inicio de sesión', 'Usuario inició sesión correctamente', 'auth', null, null);
+              } catch (Throwable $e) {
+                error_log('Error registrando auditoría de login: ' . $e->getMessage());
+              }
+
+              header('Location: inicio.php');
+              exit;
             }
 
             $error = 'Usuario o contraseña incorrecta.';

@@ -89,27 +89,27 @@ function active($page) {
     <?php endif; ?>
   </ul>
   <hr style="border-color: rgba(255,255,255,0.06)">
-  <div class="mt-auto pb-3">
+    <div class="mt-auto pb-3">
     <!-- Usuario actual -->
-    <div class="mb-3 text-white">
+    <div class="mb-3 text-white d-flex flex-column">
 
-        <small class="text-white-50">
-            <?php echo htmlspecialchars(
-                obtenerNombreRol($_SESSION['usuario_rol'] ?? 0)
-            ); ?>
-        </small>
+      <small class="text-white-50">
+        <?php echo htmlspecialchars(
+          obtenerNombreRol($_SESSION['usuario_rol'] ?? 0)
+        ); ?>
+      </small>
         
-        <div>
-            <strong>
-                <?php echo htmlspecialchars($_SESSION['usuario_nombre'] ?? 'Usuario'); ?>
-            </strong>
-        </div>
-        
+      <div>
+        <strong>
+          <?php echo htmlspecialchars($_SESSION['usuario_nombre'] ?? 'Usuario'); ?>
+        </strong>
+      </div>
+
+      <div class="mt-2">
+        <a href="logout.php" class="btn btn-sm btn-outline-light">Cerrar sesión</a>
+      </div>
     </div>
 
     <hr style="border-color: rgba(255,255,255,0.15)">
-    <a href="logout.php" class="d-flex align-items-center text-white text-decoration-none">
-      <span class="me-2">Salir</span>
-    </a>
-  </div>
+    </div>
 </nav>

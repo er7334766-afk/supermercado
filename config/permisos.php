@@ -21,7 +21,7 @@ $PERMISOS_POR_ROL = [
         'caja' => true,
         'usuarios' => ['ver' => true, 'crear' => true, 'editar' => true, 'eliminar' => true],
         'reportes' => true,
-        'departamentos' => true,
+        'departamentos' => ['ver' => true,'crear' => true,'editar' => true,'eliminar' => true],
         'devoluciones' => true,
         'auditoria' => true,
         'inventario' => true,
@@ -42,6 +42,7 @@ $PERMISOS_POR_ROL = [
         'proveedores' => ['ver' => true, 'crear' => true, 'editar' => true, 'eliminar' => false],
         'compras' => ['ver' => true, 'crear' => true, 'editar' => false, 'eliminar' => false],
         'inventario' => true,
+        'departamentos' => ['ver' => true,'crear' => false,'editar' => false,'eliminar' => false],
         // No tiene acceso a otros módulos
     ],
 ];
