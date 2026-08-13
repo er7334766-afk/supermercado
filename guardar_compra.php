@@ -7,11 +7,14 @@ if (empty($_SESSION['usuario_id'])) {
 }
 
 require_once 'config/conexion.php';
+require_once 'config/permisos.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: compras.php');
     exit;
 }
+
+requerirAccesoAccion('compras', 'crear');
 
 $fk_usuario = isset($_SESSION['usuario_id']) ? (int)$_SESSION['usuario_id'] : 1;
 $fk_proveedor = isset($_POST['fk_proveedor']) ? (int)$_POST['fk_proveedor'] : 0;

@@ -7,6 +7,9 @@ if (empty($_SESSION['usuario_id'])) {
 }
 
 require_once 'config/conexion.php';
+require_once 'config/permisos.php';
+
+requerirAccesoAccion('productos', 'crear');
 
 try {
     $stmt = $conexion->prepare("SELECT id_departamento, nombre FROM departamentos WHERE estado = 1 ORDER BY nombre ASC");

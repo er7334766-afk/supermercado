@@ -7,6 +7,9 @@ if (empty($_SESSION['usuario_id'])) {
 }
 
 require_once 'config/conexion.php';
+require_once 'config/permisos.php';
+
+requerirAcceso('compras');
 
 $mensajeExito = '';
 if (isset($_GET['success'])) {

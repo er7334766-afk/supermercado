@@ -7,6 +7,9 @@ if (empty($_SESSION['usuario_id'])) {
 }
 
 require_once 'config/conexion.php';
+require_once 'config/permisos.php';
+
+requerirAccesoAccion('usuarios', 'crear');
 
 try {
     $stmt = $conexion->prepare("SELECT id_rol, nombre FROM roles WHERE estado = 1 ORDER BY nombre ASC");

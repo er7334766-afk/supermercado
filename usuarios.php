@@ -6,13 +6,10 @@ if (empty($_SESSION['usuario_id'])) {
     exit;
 }
 
-// Control de acceso por rol: solo administradores (rol 1) pueden ver esta página
-if (!isset($_SESSION['usuario_rol']) || (int)$_SESSION['usuario_rol'] !== 1) {
-  header('Location: inicio.php?error=' . urlencode('Acceso denegado'));
-  exit;
-}
-
 require_once 'config/conexion.php';
+require_once 'config/permisos.php';
+
+requerirAcceso('usuarios');
 
 try {
     $stmt = $conexion->prepare("SELECT u.id_usuario, u.nombre, u.apellido, u.correo, u.usuario, u.telefono, u.estado, r.nombre AS rol FROM usuarios u LEFT JOIN roles r ON r.id_rol = u.fk_rol ORDER BY u.id_usuario DESC");

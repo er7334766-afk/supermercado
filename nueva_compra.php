@@ -7,6 +7,9 @@ if (empty($_SESSION['usuario_id'])) {
 }
 
 require_once 'config/conexion.php';
+require_once 'config/permisos.php';
+
+requerirAccesoAccion('compras', 'crear');
 
 try {
     $stmt = $conexion->prepare("SELECT id_proveedor, nombre_empresa FROM proveedores WHERE estado = 1 ORDER BY nombre_empresa ASC");

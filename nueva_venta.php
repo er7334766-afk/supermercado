@@ -7,6 +7,9 @@ if (empty($_SESSION['usuario_id'])) {
 }
 
 require_once 'config/conexion.php';
+require_once 'config/permisos.php';
+
+requerirAccesoAccion('ventas', 'crear');
 
 try {
     $stmt = $conexion->prepare("SELECT id_cliente, nombre, apellido FROM clientes WHERE estado = 1 ORDER BY nombre ASC");

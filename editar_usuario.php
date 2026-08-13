@@ -6,13 +6,10 @@ if (empty($_SESSION['usuario_id'])) {
     exit;
 }
 
-// solo administradores
-if (!isset($_SESSION['usuario_rol']) || (int)$_SESSION['usuario_rol'] !== 1) {
-    header('Location: inicio.php?error=' . urlencode('Acceso denegado'));
-    exit;
-}
-
 require_once 'config/conexion.php';
+require_once 'config/permisos.php';
+
+requerirAccesoAccion('usuarios', 'editar');
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 if ($id <= 0) {

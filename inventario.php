@@ -1,11 +1,14 @@
 ﻿<?php
 session_start();
 require_once 'config/conexion.php';
+require_once 'config/permisos.php';
 
 if (empty($_SESSION['usuario_id'])) {
     header('Location: index.php');
     exit;
 }
+
+requerirAcceso('inventario');
 
 try {
     $stmt = $conexion->prepare('SELECT p.codigo_barras, p.nombre, p.existencia, p.unidad_medida, d.nombre AS departamento FROM productos p LEFT JOIN departamentos d ON d.id_departamento = p.fk_departamento WHERE p.estado = 1 ORDER BY p.nombre ASC');

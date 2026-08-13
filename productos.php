@@ -7,6 +7,9 @@ if (empty($_SESSION['usuario_id'])) {
 }
 
 require_once 'config/conexion.php';
+require_once 'config/permisos.php';
+
+requerirAcceso('productos');
 
 try {
     $stmt = $conexion->prepare("SELECT p.id_producto, p.codigo_barras, p.nombre, p.descripcion, p.precio_compra, p.precio_venta, p.existencia, p.existencia_minima, p.unidad_medida, p.fecha_vencimiento, p.estado, d.nombre AS departamento FROM productos p LEFT JOIN departamentos d ON d.id_departamento = p.fk_departamento ORDER BY p.id_producto DESC");

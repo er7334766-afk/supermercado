@@ -1,11 +1,17 @@
 ﻿<?php
 session_start();
 require_once 'config/conexion.php';
+require_once 'config/permisos.php';
+require_once 'config/mensajes.php';
 
 if (empty($_SESSION['usuario_id'])) {
     header('Location: index.php');
     exit;
 }
+
+requerirAcceso('inicio');
+
+$mensajeAccesoDenegado = mostrarMensajeAccesoDenegado();
 
 if (isset($_GET['error'])) {
     $errorLogin = 'Usuario o contraseña incorrecta';
@@ -59,6 +65,11 @@ try {
     <main class="content">
       <?php if (!empty($errorLogin)) : ?>
         <div class="alert alert-danger"><?php echo htmlspecialchars($errorLogin); ?></div>
+      <?php endif; ?>
+      <?php if (!empty($mensajeAccesoDenegado)) : ?>
+        <div class="alert alert-warning" role="alert">
+          <strong>Acceso denegado:</strong> <?php echo htmlspecialchars($mensajeAccesoDenegado); ?>
+        </div>
       <?php endif; ?>
       <div class="d-flex justify-content-between align-items-center header-title">
         <h2>Inicio</h2>

@@ -1,11 +1,19 @@
 <?php
 require_once 'config/conexion.php';
+require_once 'config/permisos.php';
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ventas.php');
     exit;
 }
+
+if (empty($_SESSION['usuario_id'])) {
+    header('Location: index.php');
+    exit;
+}
+
+requerirAccesoAccion('ventas', 'crear');
 
 $fk_cliente = isset($_POST['fk_cliente']) ? (int)$_POST['fk_cliente'] : 0;
 $numero_factura = trim((string)($_POST['numero_factura'] ?? ''));

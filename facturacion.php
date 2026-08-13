@@ -1,11 +1,14 @@
 ﻿<?php
 session_start();
 require_once 'config/conexion.php';
+require_once 'config/permisos.php';
 
 if (empty($_SESSION['usuario_id'])) {
     header('Location: index.php');
     exit;
 }
+
+requerirAcceso('facturacion');
 
 try {
     $stmt = $conexion->prepare('SELECT v.id_venta, v.numero_factura, CONCAT(COALESCE(c.nombre, ""), " ", COALESCE(c.apellido, "")) AS cliente, v.fecha_venta, v.total, v.estado FROM ventas v LEFT JOIN clientes c ON c.id_cliente = v.fk_cliente ORDER BY v.id_venta DESC');

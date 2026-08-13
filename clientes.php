@@ -7,6 +7,9 @@ if (empty($_SESSION['usuario_id'])) {
 }
 
 require_once 'config/conexion.php';
+require_once 'config/permisos.php';
+
+requerirAcceso('clientes');
 
 try {
     $stmt = $conexion->prepare("SELECT id_cliente, nombre, apellido, identidad, rtn, telefono, correo, direccion, estado FROM clientes ORDER BY id_cliente DESC");

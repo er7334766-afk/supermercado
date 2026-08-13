@@ -1,11 +1,14 @@
 ﻿<?php
 session_start();
 require_once 'config/conexion.php';
+require_once 'config/permisos.php';
 
 if (empty($_SESSION['usuario_id'])) {
     header('Location: index.php');
     exit;
 }
+
+requerirAcceso('auditoria');
 
 try {
     $stmt = $conexion->prepare(

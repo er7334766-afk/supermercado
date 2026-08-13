@@ -7,6 +7,9 @@ if (empty($_SESSION['usuario_id'])) {
 }
 
 require_once 'config/conexion.php';
+require_once 'config/permisos.php';
+
+requerirAcceso('departamentos');
 
 try {
     $stmt = $conexion->prepare("SELECT id_departamento, nombre, descripcion, estado FROM departamentos ORDER BY id_departamento DESC");

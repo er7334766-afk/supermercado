@@ -1,7 +1,14 @@
 <?php
+session_start();
 require_once 'config/conexion.php';
+require_once 'config/permisos.php';
 
-$id_cliente = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+if (empty($_SESSION['usuario_id'])) {
+    header('Location: index.php');
+    exit;
+}
+
+requerirAccesoAccion('clientes', 'eliminar');
 
 if ($id_cliente > 0) {
     try {
